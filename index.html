@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Venue Ticketing System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Grand Theatre Ticketing</h1>
+  </header>
+
+  <main class="layout-container">
+    <!-- Map Section with Navigation Controls -->
+    <section class="map-section">
+      <div class="controls">
+        <button type="button" id="zoom-in">Zoom In (+)</button>
+        <button type="button" id="zoom-out">Zoom Out (-)</button>
+        <button type="button" id="move-up">Up</button>
+        <button type="button" id="move-down">Down</button>
+        <button type="button" id="move-left">Left</button>
+        <button type="button" id="move-right">Right</button>
+        <button type="button" id="reset-view">Reset View</button>
+      </div>
+
+      <div class="map-viewport">
+        <div id="venue-map" class="venue-map">
+          <!-- Dynamically generated via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Sidebar: Inspection & Cart Panels -->
+    <aside class="sidebar">
+      <!-- Seat Inspection Panel -->
+      <section class="inspection-panel">
+        <h2>Seat Details</h2>
+        <div id="seat-info">
+          <p>Click on an available seat to inspect details.</p>
+        </div>
+        <button type="button" id="add-to-cart-btn" disabled>ADD TO CART</button>
+      </section>
+
+      <!-- Cart Panel -->
+      <section class="cart-panel">
+        <h2>Your Cart</h2>
+        <ul id="cart-list"></ul>
+        <p class="total-display">Total Price: $<span id="total-price">0</span></p>
+      </section>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
