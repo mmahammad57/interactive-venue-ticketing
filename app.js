@@ -122,3 +122,76 @@ function handleSeatInspection(seatId, sectionName, price, buttonElement) {
 
 // Initial Call
 renderVenueMap();
+
+// DOM Selectors for Cart
+const cartList = document.querySelector("#cart-list");
+const totalPriceElement = document.querySelector("#total-price");
+
+// Global Cart Array
+const cart = [];
+
+// Add currently inspected seat to cart
+addToCartBtn.addEventListener("click", () => {
+  if (!currentInspectedSeat) return;
+
+  // Prevent duplicate addition
+  const alreadyInCart = cart.some((item) => item.id === currentInspectedSeat.id);
+  if (alreadyInCart) return;
+
+  // Push seat to cart state
+  cart.push({ ...currentInspectedSeat });
+
+  // Update corresponding button on the venue map
+  const seatButton = document.querySelector(`[data-seat-id="${currentInspectedSeat.id}"]`);
+  if (seatButton) {
+    seatButton.className = "seat in-cart";
+  }
+
+  // Update UI and clear inspection panel state
+  renderCart();
+  currentInspectedSeat = null;
+  seatInfoContainer.innerHTML = "<p>Click on an available seat to inspect details.</p>";
+  addToCartBtn.disabled = true;
+});
+
+// Render Cart items and update Total Price
+function renderCart() {
+  cartList.innerHTML = "";
+
+  cart.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "cart-item";
+
+    const itemText = document.createElement("span");
+    itemText.textContent = `${item.id} (${item.section}) - $${item.price}`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "Remove";
+    removeBtn.addEventListener("click", () => removeFromCart(item.id));
+
+    li.append(itemText, removeBtn);
+    cartList.append(li);
+  });
+
+  // Calculate and display total price using reduce
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  totalPriceElement.textContent = total;
+}
+
+// Remove item from cart and synchronize with venue map
+function removeFromCart(seatId) {
+  const itemIndex = cart.findIndex((item) => item.id === seatId);
+  if (itemIndex !== -1) {
+    cart.splice(itemIndex, 1);
+  }
+
+  // Restore seat status on map back to available
+  const seatButton = document.querySelector(`[data-seat-id="${seatId}"]`);
+  if (seatButton) {
+    seatButton.className = "seat available";
+  }
+
+  renderCart();
+}
