@@ -120,9 +120,6 @@ function handleSeatInspection(seatId, sectionName, price, buttonElement) {
   addToCartBtn.disabled = buttonElement.classList.contains("in-cart");
 }
 
-// Initial Call
-renderVenueMap();
-
 // DOM Selectors for Cart
 const cartList = document.querySelector("#cart-list");
 const totalPriceElement = document.querySelector("#total-price");
@@ -140,6 +137,7 @@ addToCartBtn.addEventListener("click", () => {
 
   // Push seat to cart state
   cart.push({ ...currentInspectedSeat });
+  saveCartToStorage();
 
   // Update corresponding button on the venue map
   const seatButton = document.querySelector(`[data-seat-id="${currentInspectedSeat.id}"]`);
@@ -185,6 +183,7 @@ function removeFromCart(seatId) {
   const itemIndex = cart.findIndex((item) => item.id === seatId);
   if (itemIndex !== -1) {
     cart.splice(itemIndex, 1);
+    saveCartToStorage();
   }
 
   // Restore seat status on map back to available
@@ -195,3 +194,36 @@ function removeFromCart(seatId) {
 
   renderCart();
 }
+
+// LocalStorage Key
+const STORAGE_KEY = "venue_ticketing_cart";
+
+// Save Cart array to localStorage
+function saveCartToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+}
+
+// Restore Cart and Map seat states from localStorage on page load
+function loadCartFromStorage() {
+  const savedCartData = localStorage.getItem(STORAGE_KEY);
+  if (savedCartData) {
+    try {
+      const parsedCart = JSON.parse(savedCartData);
+      parsedCart.forEach((item) => {
+        cart.push(item);
+        // Mark matching seat on map as in-cart
+        const seatButton = document.querySelector(`[data-seat-id="${item.id}"]`);
+        if (seatButton) {
+          seatButton.className = "seat in-cart";
+        }
+      });
+      renderCart();
+    } catch (error) {
+      console.error("Error loading cart from storage:", error);
+    }
+  }
+}
+
+// Initial Call
+renderVenueMap();
+loadCartFromStorage(); // Restore saved cart state
