@@ -227,3 +227,60 @@ function loadCartFromStorage() {
 // Initial Call
 renderVenueMap();
 loadCartFromStorage(); // Restore saved cart state
+
+// Map Navigation State Variables
+let scale = 1;
+let panX = 0;
+let panY = 0;
+
+const ZOOM_STEP = 0.1;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 2.0;
+const PAN_STEP = 30;
+
+// Apply CSS Transform to Venue Map
+function updateMapTransform() {
+  venueMap.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+}
+
+// Map Controls Event Listeners
+document.querySelector("#zoom-in").addEventListener("click", () => {
+  if (scale < MAX_SCALE) {
+    scale = parseFloat((scale + ZOOM_STEP).toFixed(2));
+    updateMapTransform();
+  }
+});
+
+document.querySelector("#zoom-out").addEventListener("click", () => {
+  if (scale > MIN_SCALE) {
+    scale = parseFloat((scale - ZOOM_STEP).toFixed(2));
+    updateMapTransform();
+  }
+});
+
+document.querySelector("#move-up").addEventListener("click", () => {
+  panY += PAN_STEP;
+  updateMapTransform();
+});
+
+document.querySelector("#move-down").addEventListener("click", () => {
+  panY -= PAN_STEP;
+  updateMapTransform();
+});
+
+document.querySelector("#move-left").addEventListener("click", () => {
+  panX += PAN_STEP;
+  updateMapTransform();
+});
+
+document.querySelector("#move-right").addEventListener("click", () => {
+  panX -= PAN_STEP;
+  updateMapTransform();
+});
+
+document.querySelector("#reset-view").addEventListener("click", () => {
+  scale = 1;
+  panX = 0;
+  panY = 0;
+  updateMapTransform();
+});
