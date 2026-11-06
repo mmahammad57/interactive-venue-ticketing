@@ -189,3 +189,63 @@ header {
     flex-direction: column;
   }
 }
+
+/* Responsive Layout Adaptations */
+
+/* Tablet & Mobile Breakpoint (768px and below) */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .layout-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .map-section {
+    padding: 15px;
+  }
+
+  .map-viewport {
+    height: 350px; /* Reduced viewport height for smaller screens */
+  }
+
+  .controls {
+    justify-content: center;
+  }
+
+  .controls button {
+    flex: 1 1 calc(33.333% - 8px);
+    padding: 10px 8px;
+    font-size: 13px;
+    text-align: center;
+  }
+}
+
+/* Small Mobile Breakpoint (480px and below) */
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .map-viewport {
+    height: 300px;
+  }
+
+  .controls button {
+    flex: 1 1 calc(50% - 8px); /* 2 buttons per line on narrow devices */
+    font-size: 12px;
+  }
+
+  .seat {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .row-label {
+    width: 20px;
+    font-size: 13px;
+  }
+}
