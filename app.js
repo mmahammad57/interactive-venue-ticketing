@@ -284,3 +284,56 @@ document.querySelector("#reset-view").addEventListener("click", () => {
   panY = 0;
   updateMapTransform();
 });
+
+
+// Bonus 10%: Mouse-wheel zoom and click/drag panning integration
+
+const mapViewport = document.querySelector(".map-viewport");
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+// 1. Mouse-wheel zoom
+mapViewport.addEventListener("wheel", (e) => {
+  e.preventDefault(); // Prevent default browser page scrolling
+
+  if (e.deltaY < 0) {
+    // Scroll up -> Zoom In
+    if (scale < MAX_SCALE) {
+      scale = parseFloat((scale + ZOOM_STEP).toFixed(2));
+    }
+  } else {
+    // Scroll down -> Zoom Out
+    if (scale > MIN_SCALE) {
+      scale = parseFloat((scale - ZOOM_STEP).toFixed(2));
+    }
+  }
+
+  updateMapTransform();
+}, { passive: false });
+
+// 2. Click & Drag panning
+mapViewport.addEventListener("mousedown", (e) => {
+  // Trigger dragging only on left mouse button press
+  if (e.button !== 0) return;
+  
+  isDragging = true;
+  startX = e.clientX - panX;
+  startY = e.clientY - panY;
+  mapViewport.style.cursor = "grabbing";
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  
+  panX = e.clientX - startX;
+  panY = e.clientY - startY;
+  updateMapTransform();
+});
+
+window.addEventListener("mouseup", () => {
+  if (isDragging) {
+    isDragging = false;
+    mapViewport.style.cursor = "default";
+  }
+});
