@@ -204,23 +204,37 @@ function saveCartToStorage() {
 }
 
 // Restore Cart and Map seat states from localStorage on page load
+// Safe localStorage loader with try-catch and structural validation
 function loadCartFromStorage() {
-  const savedCartData = localStorage.getItem(STORAGE_KEY);
-  if (savedCartData) {
-    try {
-      const parsedCart = JSON.parse(savedCartData);
-      parsedCart.forEach((item) => {
-        cart.push(item);
-        // Mark matching seat on map as in-cart
-        const seatButton = document.querySelector(`[data-seat-id="${item.id}"]`);
-        if (seatButton) {
-          seatButton.className = "seat in-cart";
-        }
-      });
-      renderCart();
-    } catch (error) {
-      console.error("Error loading cart from storage:", error);
+  try {
+    const savedCartData = localStorage.getItem(STORAGE_KEY);
+    if (!savedCartData) return;
+
+    const parsedCart = JSON.parse(savedCartData);
+    
+    // Validate if parsed data is a valid array
+    if (!Array.isArray(parsedCart)) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
     }
+
+    parsedCart.forEach((item) => {
+      // Validate object properties before adding to cart
+      if (item && item.id && typeof item.price === "number") {
+        if (!isSeatInCart(item.id)) {
+          cart.push(item);
+          const seatButton = document.querySelector(`[data-seat-id="${item.id}"]`);
+          if (seatButton) {
+            seatButton.className = "seat in-cart";
+          }
+        }
+      }
+    });
+
+    renderCart();
+  } catch (error) {
+    console.error("Corrupted localStorage data encountered. Resetting cart storage.", error);
+    localStorage.removeItem(STORAGE_KEY); // Clear corrupted data safely
   }
 }
 
