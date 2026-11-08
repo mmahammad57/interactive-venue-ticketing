@@ -109,7 +109,8 @@ header {
 }
 
 /* State 2: Inspected */
-.seat.inspected {
+.seat.inspected,
+.seat.inspected:hover {
   background-color: #f1c40f;
   color: black;
   border: 2px solid #d35400;
