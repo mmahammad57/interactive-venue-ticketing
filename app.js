@@ -210,6 +210,13 @@ function removeFromCart(seatId) {
     seatButton.className = "seat available";
   }
 
+  // Clear inspection panel if the currently inspected seat was removed
+  if (currentInspectedSeat && currentInspectedSeat.id === seatId) {
+    currentInspectedSeat = null;
+    seatInfoContainer.innerHTML = "<p>Click on an available seat to inspect details.</p>";
+    addToCartBtn.disabled = true;
+  }
+
   renderCart();
 }
 
