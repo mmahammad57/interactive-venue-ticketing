@@ -74,15 +74,18 @@ function renderVenueMap() {
         seatButton.textContent = i;
         seatButton.dataset.seatId = seatId;
 
+        // Accessible seat status assignment
         if (venueData.unavailableSeats.includes(seatId)) {
           seatButton.classList.add("unavailable");
-          seatButton.disabled = true;
+          seatButton.setAttribute("aria-disabled", "true"); // Replaces native disabled
         } else {
           seatButton.classList.add("available");
-          seatButton.addEventListener("click", () => {
-            handleSeatInspection(seatId, section.name, section.price, seatButton);
-          });
         }
+
+        // Attach click listener to ALL seats so unavailable ones can be inspected
+        seatButton.addEventListener("click", () => {
+          handleSeatInspection(seatId, section.name, section.price, seatButton);
+        });
 
         rowElement.appendChild(seatButton);
       }
@@ -94,30 +97,45 @@ function renderVenueMap() {
   });
 }
 
-// Handle Seat Click (Inspection state)
+// Handle Seat Click (Inspection state & status logic)
 function handleSeatInspection(seatId, sectionName, price, buttonElement) {
-  // Clear previous inspected seat highlight if it was not added to cart
+  // Clear previous inspected seat highlight
   if (currentInspectedSeat) {
     const prevButton = document.querySelector(`[data-seat-id="${currentInspectedSeat.id}"]`);
     if (prevButton && prevButton.classList.contains("inspected")) {
-      prevButton.className = "seat available";
+      prevButton.classList.remove("inspected");
+      if (!prevButton.classList.contains("in-cart") && !prevButton.classList.contains("unavailable")) {
+        prevButton.classList.add("available");
+      }
     }
   }
 
-  currentInspectedSeat = { id: seatId, section: sectionName, price: price };
+  const isUnavailable = buttonElement.classList.contains("unavailable");
+  const isInCart = buttonElement.classList.contains("in-cart");
+  
+  // Register seat as actionable only if it is not unavailable
+  currentInspectedSeat = isUnavailable ? null : { id: seatId, section: sectionName, price: price };
 
-  if (!buttonElement.classList.contains("in-cart")) {
-    buttonElement.className = "seat inspected";
+  let statusText = "Available";
+  
+  if (isUnavailable) {
+    statusText = '<span style="color: #e74c3c; font-weight: bold;">Unavailable</span>';
+    addToCartBtn.disabled = true;
+  } else if (isInCart) {
+    statusText = "In Cart";
+    addToCartBtn.disabled = true;
+  } else {
+    statusText = "Inspected";
+    buttonElement.classList.add("inspected");
+    addToCartBtn.disabled = false;
   }
 
   seatInfoContainer.innerHTML = `
     <p><strong>Seat ID:</strong> ${seatId}</p>
     <p><strong>Section:</strong> ${sectionName}</p>
     <p><strong>Price:</strong> $${price}</p>
-    <p><strong>Status:</strong> ${buttonElement.classList.contains("in-cart") ? "In Cart" : "Inspected"}</p>
+    <p><strong>Status:</strong> ${statusText}</p>
   `;
-
-  addToCartBtn.disabled = buttonElement.classList.contains("in-cart");
 }
 
 // DOM Selectors for Cart
@@ -331,10 +349,10 @@ mapViewport.addEventListener("wheel", (e) => {
   updateMapTransform();
 }, { passive: false });
 
-// 2. Click & Drag panning
+// 2. Click & Drag panning (with seat click safeguard)
 mapViewport.addEventListener("mousedown", (e) => {
-  // Trigger dragging only on left mouse button press
-  if (e.button !== 0) return;
+  // Trigger dragging only on left mouse button press AND ignore if clicking directly on a seat
+  if (e.button !== 0 || e.target.closest('.seat')) return;
   
   isDragging = true;
   startX = e.clientX - panX;
