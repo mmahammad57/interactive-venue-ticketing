@@ -195,6 +195,11 @@ function removeFromCart(seatId) {
   renderCart();
 }
 
+// Helper function to check if seat is already in cart
+function isSeatInCart(seatId) {
+  return cart.some((item) => item.id === seatId);
+}
+
 // LocalStorage Key
 const STORAGE_KEY = "venue_ticketing_cart";
 
