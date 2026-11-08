@@ -1,5 +1,10 @@
 # Grand Theatre — Interactive Venue Ticketing System (WM1 Project)
 
+**Student Name:** Mahammad Mammadli  
+**Student ID:** 23917  
+**Commit Strategy:** Meaningful weekly commits following Conventional Commits format (`feat:`, `fix:`, `docs:`) tracking progress over the course of the project development.
+
+
 An interactive front-end web application for venue ticket selection built using HTML5, CSS3, and Vanilla JavaScript. The system dynamically generates an auditorium-style theatre map from a JavaScript data model, allowing users to inspect seats, manage a cart, navigate the layout, and persist state via `localStorage`.
 
 ---
@@ -17,13 +22,13 @@ An interactive front-end web application for venue ticket selection built using 
 ---
 
 ## Project Structure
-
+```text
 interactive-venue-ticketing/
 ├── index.html   # Main HTML layout structure
 ├── style.css    # Layout styling, responsive rules, and seat state color themes
 ├── app.js       # Core venue data model, DOM rendering, cart logic, and event handling
 └── README.md    # Project documentation and setup guide
-
+```
 ---
 
 ## How to Run
